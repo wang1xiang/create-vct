@@ -194,7 +194,7 @@ async function init() {
     isAntd,
     isRouter,
     isRedux,
-    isQuery
+    isQuery,
   } = result
 
   // 最终输出文件的目录
@@ -310,16 +310,12 @@ async function init() {
   )
   // eslint配置
   if (isEslint) {
-    const eslintTemplate = path.resolve(
-      // @ts-ignore
-      fileURLToPath(import.meta.url),
-      '../../eslint-templates'
-    )
+    const eslintTemplate = generatePath('eslint')
     const eslintFile = path.join(targetPath, '.eslintrc.json')
     const prettierFile = path.join(targetPath, '.prettierrc.json')
     const eslintIgnoreFile = path.join(targetPath, '.eslintignore')
     const { packages, eslintOverrides } = await import(
-      `../eslint-templates/${template}.js`
+      `${eslintTemplate}/${template}.js`
     )
 
     const packageList = { ...commonPackages, ...packages }
@@ -351,14 +347,10 @@ async function init() {
     write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
   }
   // antd配置
+  const fileSuffix = template.endsWith('-ts') ? '.tsx' : '.jsx'
+  const AppComponent = path.join(targetPath, `/src/App${fileSuffix}`)
+  const MainComponent = path.join(targetPath, `/src/main${fileSuffix}`)
   if (isAntd) {
-    const AppComponent = path.join(targetPath, './src/App.tsx')
-    const MainComponent = path.join(targetPath, './src/Main.tsx')
-    // 获取模板下的文件 将除了package.json的文件全部复制到输出目录中
-    const files = fs.readdirSync(templateDir)
-    for (const file of files.filter((f) => f !== 'package.json')) {
-      write(file)
-    }
     // @ts-ignore
     const { packages, App, Main } = await import('../antd-templates/index.js')
     fs.writeFileSync(AppComponent, App)
@@ -367,22 +359,25 @@ async function init() {
     pkg.dependencies = { ...pkg.dependencies, ...packages }
     write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
   }
+
+
+  const copyTemplateFile = (name: string) => {
+    const templatePath = generatePath(name, template)
+    // 获取模板下的文件 将除了package.json的文件全部复制到输出目录中
+    const files = fs.readdirSync(templatePath)
+    for (const file of files) {
+      write(file, templatePath)
+    }
+  }
   // react-router
   if (isRouter) {
-    const routeTemplate = path.resolve(
-      // @ts-ignore
-      fileURLToPath(import.meta.url),
-      '../../router-templates'
-    )
-    // 获取模板下的文件 将除了package.json的文件全部复制到输出目录中
-    const files = fs.readdirSync(routeTemplate)
-    for (const file of files.filter((f) => f !== 'index.js')) {
-      write(file, routeTemplate)
-    }
-    const AppComponent = path.join(targetPath, './src/App.tsx')
-    const MainComponent = path.join(targetPath, './src/Main.tsx')
+    copyTemplateFile('router')
     // @ts-ignore
-    const { packages, App, Main } = await import('../router-templates/index.js')
+    let { packages, App, Main, Antd_App, Antd_Main } = await import('../router-templates/index.js')
+    if (isAntd) {
+      App = Antd_App
+      Main = Antd_Main
+    }
     fs.writeFileSync(AppComponent, App)
     fs.writeFileSync(MainComponent, Main)
 
@@ -391,21 +386,12 @@ async function init() {
   }
   // redux toolkit
   if (isRedux) {
-    const reduxTemplate = path.resolve(
-      // @ts-ignore
-      fileURLToPath(import.meta.url),
-      '../../redux-templates'
-    )
-    // 获取模板下的文件 将除了package.json的文件全部复制到输出目录中
-    const files = fs.readdirSync(reduxTemplate)
-    for (const file of files.filter((f) => f !== 'index.js')) {
-      write(file, reduxTemplate)
-    }
-    const AppComponent = path.join(targetPath, './src/App.tsx')
-    const MainComponent = path.join(targetPath, './src/Main.tsx')
+    copyTemplateFile('redux')
     // @ts-ignore
-    const { packages, App, Main } = await import('../redux-templates/index.js')
-    fs.writeFileSync(AppComponent, App)
+    let { packages, Main, Router_Main, Antd_Main, Antd_Router_Main } = await import('../redux-templates/index.js')
+    if (isAntd) Main = Antd_Main
+    if (isRouter) Main = Router_Main
+    if (isAntd && isRouter) Main = Antd_Router_Main
     fs.writeFileSync(MainComponent, Main)
 
     pkg.dependencies = { ...pkg.dependencies, ...packages }
@@ -414,19 +400,12 @@ async function init() {
 
   // react-query
   if (isQuery) {
-    const queryTemplate = path.resolve(
-      // @ts-ignore
-      fileURLToPath(import.meta.url),
-      '../../query-templates'
-    )
+    copyTemplateFile('query')
     // 获取模板下的文件 将除了package.json的文件全部复制到输出目录中
-    const files = fs.readdirSync(queryTemplate)
-    for (const file of files.filter((f) => f !== 'index.js')) {
-      write(file, queryTemplate)
-    }
     const MainComponent = path.join(targetPath, './src/Main.tsx')
     // @ts-ignore
     const { packages, Main } = await import('../query-templates/index.js')
+    // TODO: 区分之前的main.jsx
     fs.writeFileSync(MainComponent, Main)
 
     pkg.dependencies = { ...pkg.dependencies, ...packages }
@@ -447,7 +426,9 @@ async function init() {
   }
   switch (pkgManager) {
     default:
-      console.log('  git init')
+      if (isEslint) {
+        console.log('  git init')
+      }
       console.log('  yarn')
       console.log('  yarn dev')
       break
@@ -539,7 +520,17 @@ function editFile(file: string, callback: (content: string) => string) {
   const content = fs.readFileSync(file, 'utf-8')
   fs.writeFileSync(file, callback(content), 'utf-8')
 }
+function generatePath (name: string, suffix = '') {
+  const template = path.resolve(
+    // @ts-ignore
+    fileURLToPath(import.meta.url),
+    `../../${name}-templates/${suffix}`
+  )
+  return template
+}
+// function generateAppOrMain (prevTypes, ) {
 
+// }
 init().catch((e) => {
   console.error(e)
 })

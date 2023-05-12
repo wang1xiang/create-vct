@@ -1,6 +1,7 @@
 export const packages = {
-  "antd": "^5.4.6",
   "@ant-design/icons": "^5.0.1",
+  "antd": "^5.4.6",
+  "dayjs": "^1.11.7",
 }
 
 export const App = `import { useState } from 'react';
@@ -8,7 +9,7 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import { Button } from 'antd';
 import { Html5TwoTone } from '@ant-design/icons';
-import './App.less';
+import './App.scss';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -45,10 +46,18 @@ import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import 'antd/dist/reset.css';
 import './index.scss';
+import zhCN from 'antd/locale/zh_CN';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import { ConfigProvider } from 'antd';
+
+dayjs.locale('zh-cn');
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <ConfigProvider locale={zhCN}>
+      <App />
+    </ConfigProvider>
   </React.StrictMode>
 );
 `

@@ -1,58 +1,74 @@
 # create-vite
 
+**这块来一个 gif 图，整个 cli 工具使用的过程**
 **记得给每块加一个配图**
 
 用于初始化 vite + React 项目的脚手架工具
 
-## 在 create-vite 项目修改
+## 事情起因
 
-### 修改 vite.config 默认配置
+我们公司前端都是用的 vue3，但最近有个项目只有 react 的框架可以做，领导一眼看中我说让我来弄这个项目，顺便完了之后搭一个 react 脚手架工具用于以后快速开发 react 应用。Ok，接受挑战 😜。
+
+我们整个脚手架工具是在 create-vite 的基础上修改，封装了 react 中常用到的各种包：react-router、redux-toolkit、react-query、antd 等等，包含 ts 和 js 版本，同时也封装了 eslint + prettier + husky + commitlint。
+
+下面让我们来看看整个过程，篇幅较长，请耐心观看。
+
+## 针对 create-vite 的修改
+
+**"工欲善其事，必先利其器"**，开始之前，如果没看过 create-vite 源码的小伙伴，欢迎阅读这篇文章[站在巨人的肩膀上：你还不懂 create-vite 原理吗？来一起康康。](https://juejin.cn/post/7217750296171118651)，顺便动手点点赞 👍。
+
+### 删除不需要的模块
+
+因为我们只需要 react 的模板，所以把其他不需要的一并删除掉，最后只留下这些文件。
+![create-vite-delete.png](./images/create-vite-delete.png)
+
+### 修改模板 vite.config.ts 代码
 
 1. 配置 alias 添加别名设置；
-2. 配置 server 代理服务器。
+2. 配置 server 代理服务器；
 
-```ts
-// vite.config.ts
-...
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, 'src'), // src 路径
-    }
-  },
-  server: {
-    port: 5173, // 开发环境启动的端口
-    proxy: {
-      '/api': {
-        // 当遇到 /api 路径时，将其转换成 target 的值，这里我们为了测试，写了新蜂商城的请求地址
-        target: 'http://xx.xx.xx.xx:8080/api',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''), // 将 /api 重写为空
+   ```ts
+    // vite.config.ts
+    ...
+    export default defineConfig({
+      plugins: [react()],
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, 'src'), // src 路径
+        }
       },
-    },
-  },
-})
-```
+      server: {
+        port: 5173, // 开发环境启动的端口
+        proxy: {
+          '/api': {
+            // 当遇到 /api 路径时，将其转换成 target 的值
+            target: 'http://xx.xx.xx.xx:8080/api',
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/api/, ''), // 将 /api 重写为空
+          },
+        },
+      },
+    })
+   ```
 
 3. 路径别名同时需要配置 tsconfig.json，不然直接使用 ts 会报错
 
-```json
-// tsconfig.json
-{
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
-```
+   ```json
+   // tsconfig.json
+   {
+     "compilerOptions": {
+       "paths": {
+         "@/*": ["./src/*"]
+       }
+     }
+   }
+   ```
 
-## 使用 sass 作为 css 预处理器
+### 使用 sass 作为 css 预处理器
 
 公司项目都是使用 sass，所以脚手架自然使用 sass 来处理 css。
 
-1. 在 package.json 中直接添加`"sass": "^1.62.1"`依赖；
+1. 在 package.json 中依赖中添加`"sass": "^1.62.1"`；
 2. 将.css 后缀文件修改为.scss 后缀文件；
 3. 创建 src/styles/variables.scss，设置全局 sass 变量；
 4. 在 vite.config.js 中配置全局 sass 变量：
@@ -60,12 +76,10 @@ export default defineConfig({
 ```js
 export default defineConfig({
   ...
-  // 公共样式文件 那两个都加进去
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData:
-          '@import "@/styles/variables.scss";',
+        additionalData: '@import "@/styles/variables.scss";',
       },
     },
   }
@@ -73,49 +87,13 @@ export default defineConfig({
 })
 ```
 
-注意：**vite 对.sass 已经提供了内置支持，所以不再需要安装 loader 了，[官方文档](https://cn.vitejs.dev/guide/features.html#css-pre-processors)**
+**注意：vite 对.sass 已经提供了内置支持，所以不再需要安装 loader 了，[官方文档](https://cn.vitejs.dev/guide/features.html#css-pre-processors)**
 
-## 代码 & git 规范
+## 统一代码 & git 规范
 
-### 添加 eslint & prettier 用于代码规范
+### 使用 EditorConfig 统一 IDE 编码风格
 
-eslint 和 prettier 的安装参考的是[vite-pretty-lint](https://github.com/tzsk/vite-pretty-lint)，直接将项目克隆到本地，然后删除自己不需要的代码。因为我们只需要在 create-vite 的基础上改造，所以在 create-vite 的提问条件中加一条“是否安装 ESLint 配置”，然后添加代码：
-
-```js
-if (isEslint) {
-  const eslintFile = path.join(eslintTarget, '.eslintrc.json')
-  const prettierFile = path.join(eslintTarget, '.prettierrc.json')
-  const eslintIgnoreFile = path.join(eslintTarget, '.eslintignore')
-  const { packages, eslintOverrides } = await import(
-    `../eslint-templates/${template}.js`
-  )
-
-  const packageList = { ...commonPackages, ...packages }
-  const eslintConfigOverrides = [...eslintConfig.overrides, ...eslintOverrides]
-  const eslint = { ...eslintConfig, overrides: eslintConfigOverrides }
-
-  const viteConfigFiles = ['vite.config.js', 'vite.config.ts']
-  const [viteFile] = viteConfigFiles
-    .map((file) => path.join(eslintTarget, file))
-    .filter((file) => fs.existsSync(file))
-
-  const viteConfig = viteEslint(fs.readFileSync(viteFile, 'utf8'))
-
-  fs.writeFileSync(eslintFile, JSON.stringify(eslint, null, 2))
-  fs.writeFileSync(prettierFile, JSON.stringify(prettierConfig, null, 2))
-  fs.writeFileSync(eslintIgnoreFile, eslintIgnore.join('\n'))
-  fs.writeFileSync(viteFile, viteConfig)
-  pkg.devDependencies = { ...pkg.devDependencies, ...packageList }
-
-  write('package.json', JSON.stringify(pkg, null, 2) + '\n')
-}
-```
-
-最终将`.eslintrc.json`、`.prettierrc.json`和`.eslintignore`配置添加到项目中，并修改 package。json 文件，添加 ESLint 的依赖项。
-
-### 使用 EditorConfig 统一编码风格
-
-在根目录下创建.editorconfig 文件
+.editorconfig 文件创建在项目根目录下：
 
 ```bash
 [*]
@@ -127,7 +105,11 @@ trim_trailing_whitespace = false
 insert_final_newline = false
 ```
 
-### 添加 husky 用于 git 规范
+### 添加 eslint & prettier 用于代码规范
+
+eslint 和 prettier 的安装参考的是[vite-pretty-lint](https://github.com/tzsk/vite-pretty-lint)，直接将项目克隆到本地，然后删除自己不需要的代码。
+
+### 添加 pre-commit 和 commit-msg 钩子
 
 可以参考我之前的文章：[vue3 项目添加 husky+lint-staged 配置](https://juejin.cn/post/7215454235046445112)，这里我们直接开整。
 
@@ -199,9 +181,50 @@ insert_final_newline = false
 
 9. 到这里，husky + lint-staged + commitlint 都配置完成了。
 
-这一步，我们同时配置了代码规范和 git 规范，添加了 husky，所以需要在项目创建完成后，首先执行一下 git init 初始化 git 仓库，然后 husky 才能正常运行，于是就把提示信息多加了一项，如下。
+这一步完成后，我们同时配置了代码规范和 git 规范，添加了 husky，所以需要在项目创建完成后，首先执行一下 git init 初始化 git 仓库，然后 husky 才能正常运行，于是就把提示信息多加了一项，如下。
 
-![create-vct-init.png](create-vct-init.png)
+![create-vct-init.png](./iamges/create-vct-init.png)
+
+我们需要修改 create-vite 的代码，添加如下代码：
+
+```js
+if (isEslint) {
+  const eslintTemplate = '../eslint-templates'
+  const eslintFile = path.join(targetPath, '.eslintrc.json')
+  const prettierFile = path.join(targetPath, '.prettierrc.json')
+  const eslintIgnoreFile = path.join(targetPath, '.eslintignore')
+  const { packages, eslintOverrides } = await import(
+    `${eslintTemplate}/${template}.js`
+  )
+
+  const packageList = { ...commonPackages, ...packages }
+  const eslintConfigOverrides = [...eslintConfig.overrides, ...eslintOverrides]
+  const eslint = { ...eslintConfig, overrides: eslintConfigOverrides }
+
+  const viteConfigFiles = ['vite.config.js', 'vite.config.ts']
+  const [viteFile] = viteConfigFiles
+    .map((file) => path.join(targetPath, file))
+    .filter((file) => fs.existsSync(file))
+
+  const viteConfig = viteEslint(fs.readFileSync(viteFile, 'utf8'))
+
+  fs.writeFileSync(eslintFile, JSON.stringify(eslint, null, 2))
+  fs.writeFileSync(prettierFile, JSON.stringify(prettierConfig, null, 2))
+  fs.writeFileSync(eslintIgnoreFile, eslintIgnore.join('\n'))
+  fs.writeFileSync(viteFile, viteConfig)
+  const files = fs.readdirSync(eslintTemplate)
+  for (const file of files.filter((f) => !f.includes('react'))) {
+    write(file, eslintTemplate)
+  }
+  pkg.devDependencies = { ...pkg.devDependencies, ...packageList }
+  pkg.scripts = { ...pkg.scripts, ...packageScripts }
+  pkg['lint-staged'] = packageMore
+
+  write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
+}
+```
+
+最终将`.husky`、`.editorconfig`、`commitlint.config.js`、`.eslintrc.json`、`.prettierrc.json`和`.eslintignore`配置添加到项目中，并修改 package.json 文件，添加 ESLint 的依赖项。
 
 ## 集成 ant design 作为 UI 库
 
@@ -211,42 +234,44 @@ insert_final_newline = false
 
    ant-design@v5 版本支持 tree-shaking，就不用配置按需加载了。那么就很简单，我们只需要在 package.json 的`dependencies`字段中添加 antd 的库。
 
-   如果是 vue 项目的 ant-design-vue UI 库的话，需要配置按需加载，修改 vite.config.js 就可以。
+2. 全局引入 reset.css 文件；
+3. 设置 ConfigProvider 全局化配置；
 
-   ```js
-   import { defineConfig } from 'vite'
-   import vue from '@vitejs/plugin-vue'
-   import Components from 'unplugin-vue-components/vite'
-   import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
-   import path from 'path'
+   ```jsx
+   import 'antd/dist/reset.css'
+   import zhCN from 'antd/locale/zh_CN'
+   import dayjs from 'dayjs'
+   import 'dayjs/locale/zh-cn'
+   import { ConfigProvider } from 'antd'
 
-   // https://vitejs.dev/config/
-   export default defineConfig({
-     plugins: [
-       vue(),
-       Components({
-         resolvers: [AntDesignVueResolver()],
-       }),
-     ],
-     ...
-   })
+   dayjs.locale('zh-cn')
+
+   ReactDOM.createRoot(document.getElementById('root')).render(
+     <React.StrictMode>
+       <ConfigProvider locale={zhCN}>
+         <App />
+       </ConfigProvider>
+     </React.StrictMode>
+   )
    ```
 
-2. 全局引入 reset.css 文件
-3. 修改 App 组件，添加一个 antd 的组件，这样启动项目就可以看到 antd 的组件使用方法。
+4. 修改 App 组件，添加一个 antd 的组件，这样启动项目就可以看到 antd 的组件使用方法。
 
-基于以上的步骤，我们最终实现如下：
+基于以上的步骤，我们可以仿照上面的代码来修改，最终实现如下：
 
 ```js
+// antd配置
+const fileSuffix = template.endsWith('-ts') ? '.tsx' : '.jsx'
 if (isAntd) {
-  const AppComponent = path.join(eslintTarget, './src/App.tsx')
-  const MainComponent = path.join(eslintTarget, './Main/App.tsx')
+  const AppComponent = path.join(targetPath, `/src/App${fileSuffix}`)
+  const MainComponent = path.join(targetPath, `/src/main${fileSuffix}`)
   // @ts-ignore
-  const { packages, App, Main } = await import('../antd/index.js')
-  pkg.dependencies = { ...pkg.dependencies, ...packages }
+  const { packages, App, Main } = await import('../antd-templates/index.js')
   fs.writeFileSync(AppComponent, App)
   fs.writeFileSync(MainComponent, Main)
-  write('package.json', JSON.stringify(pkg, null, 2) + '\n')
+
+  pkg.dependencies = { ...pkg.dependencies, ...packages }
+  write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
 }
 ```
 
@@ -260,20 +285,25 @@ if (isAntd) {
 
 ### react-router v6 说明
 
-- <Routes />: 新增组件，移除 v5 的<Switch />组件，用<Routes />组件代替
-- <Router />: 基础路由组件，v5 的 component={Home}改写为 element={Home}
-- <Link />: 导航组件
-- <Outlet />: 新增组件，自适应渲染组件
-- useParams: 新增 Hook，获取当前路由携带参数
-- useNavigate: 新增 Hook，类似 v5 的 useHistory，获取当前路由
-- useOutlet: 新增 Hook，获取根据路由生成的 element
-- useLocation: 获取当前 location 对象
-- useRoutes: 同<Routes>组件，在 js 中使用
-- useSearchParams: 获取 URL 中 search 参数
+- `<Routes />`: 新增组件，移除 v5 的`<Switch />`组件，用`<Routes />`组件代替；
+- `<Router />`: 基础路由组件，v5 的 component={Home}改写为 element={Home}；
+- `<Link />`: 导航组件；
+- `<Outlet />`: 新增组件，自适应渲染组件；
+- useParams: 新增 Hook，获取当前路由携带参数；
+- useNavigate: 新增 Hook，类似 v5 的 useHistory，获取当前路由；
+- useOutlet: 新增 Hook，获取根据路由生成的 element；
+- useLocation: 获取当前 location 对象；
+- useRoutes: 同`<Routes>`组件，在 js 中使用；
+- useSearchParams: 获取 URL 中 search 参数。
 
 ### react-router v6 使用教程
 
 1. 添加 react-router 和 react-router-dom 依赖；
+
+   ```bash
+   yarn add react-router-dom react-router
+   ```
+
 2. 添加 src/routes/routerConfig.ts 文件，配置路由表；
 
    ```js
@@ -310,7 +340,7 @@ if (isAntd) {
 3. 创建 src/pages 文件夹，添加 Home 和 About 组件；
 4. 通过 [useRoutes](https://reactrouter.com/en/main/hooks/use-routes) 钩子将上面的路由表一一映射为路由对象
 
-   useRoutes 也就是<Routes />组件的 js 实现，在路由跳转时需要增加 loading 转场，我们可以使用`Suspense`组件传入一个 loading 组件来实现。
+   useRoutes 也就是`<Routes />`组件的 js 实现，在路由跳转时需要增加 loading 转场，我们可以使用`<Suspense />`组件传入一个 loading 组件来实现。
 
    > 此处的 Loading 组件可根据项目需求来修改转场动画
 
@@ -329,7 +359,7 @@ if (isAntd) {
    export default App
    ```
 
-5. 在 main.tsx 中配置<BrowserRouter>包裹 App 组件
+5. 在 main.tsx 中配置`<BrowserRouter />`包裹 App 组件
 
    ```tsx
    import { BrowserRouter } from 'react-router-dom'
@@ -349,20 +379,20 @@ if (isAntd) {
 
 ```ts
 if (isRouter) {
-  const routeTemplate = path.resolve(
-    // @ts-ignore
-    fileURLToPath(import.meta.url),
-    '../../router-templates'
-  )
+  const routeTemplate = generatePath('router', template)
   // 获取模板下的文件 将除了package.json的文件全部复制到输出目录中
   const files = fs.readdirSync(routeTemplate)
-  for (const file of files.filter((f) => f !== 'index.js')) {
+  for (const file of files) {
     write(file, routeTemplate)
   }
-  const AppComponent = path.join(targetPath, './src/App.tsx')
-  const MainComponent = path.join(targetPath, './src/Main.tsx')
   // @ts-ignore
-  const { packages, App, Main } = await import('../router-templates/index.js')
+  let { packages, App, Main, antd_App, antd_Main } = await import(
+    '../router-templates/index.js'
+  )
+  if (isAntd) {
+    App = antd_App
+    Main = antd_Main
+  }
   fs.writeFileSync(AppComponent, App)
   fs.writeFileSync(MainComponent, Main)
 
@@ -613,6 +643,22 @@ export default userSlice.reducer
 
 首先询问是否需要安装 Redux Toolkit，并返回 isRedux 是否为 true，如果为 true 时：
 
+```ts
+if (isRedux) {
+  copyTemplateFile('redux')
+  // @ts-ignore
+  let { packages, Main, Router_Main, Antd_Main, Antd_Router_Main } =
+    await import('../redux-templates/index.js')
+  if (isAntd) Main = Antd_Main
+  if (isRouter) Main = Router_Main
+  if (isAntd && isRouter) Main = Antd_Router_Main
+  fs.writeFileSync(MainComponent, Main)
+
+  pkg.dependencies = { ...pkg.dependencies, ...packages }
+  write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
+}
+```
+
 ## 集成 react-query 作为请求库
 
 ### 为什么是 react query
@@ -621,7 +667,7 @@ export default userSlice.reducer
 
 接下来，跟着我的流程看一下，你就会发现 react query 太香了。
 
-[!太香了图片]()
+![zhenxiang.jpg](./images/zhenxiang.jpg)
 
 ### react query 使用教程
 
@@ -814,3 +860,4 @@ export default userSlice.reducer
    ```
 
 基于以上步骤，我们实现的代码如下：
+

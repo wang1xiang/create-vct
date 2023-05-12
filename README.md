@@ -75,7 +75,9 @@ export default defineConfig({
 
 注意：**vite 对.sass 已经提供了内置支持，所以不再需要安装 loader 了，[官方文档](https://cn.vitejs.dev/guide/features.html#css-pre-processors)**
 
-## 添加 eslint & prettier 用于代码规范
+## 代码 & git 规范
+
+### 添加 eslint & prettier 用于代码规范
 
 eslint 和 prettier 的安装参考的是[vite-pretty-lint](https://github.com/tzsk/vite-pretty-lint)，直接将项目克隆到本地，然后删除自己不需要的代码。因为我们只需要在 create-vite 的基础上改造，所以在 create-vite 的提问条件中加一条“是否安装 ESLint 配置”，然后添加代码：
 
@@ -111,7 +113,21 @@ if (isEslint) {
 
 最终将`.eslintrc.json`、`.prettierrc.json`和`.eslintignore`配置添加到项目中，并修改 package。json 文件，添加 ESLint 的依赖项。
 
-## 添加 husky 用于 git 规范
+### 使用 EditorConfig 统一编码风格
+
+在根目录下创建.editorconfig 文件
+
+```bash
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = false
+insert_final_newline = false
+```
+
+### 添加 husky 用于 git 规范
 
 可以参考我之前的文章：[vue3 项目添加 husky+lint-staged 配置](https://juejin.cn/post/7215454235046445112)，这里我们直接开整。
 
@@ -143,10 +159,13 @@ if (isEslint) {
 
    ```json
     "lint-staged": {
-      "src/**/*.{js,jsx,ts,tsx,json,css,scss,md,vue}": [
+      "src/**/*.{js,jsx,ts,tsx,json,md}": [
         "eslint --fix --max-warnings=0",
         "prettier --write"
-      ]
+      ],
+      "src/**/*.{scss,less,css}": [
+        "prettier --write"
+      ],
     }
    ```
 
@@ -158,7 +177,31 @@ if (isEslint) {
 
    这一步完成后，在提交代码的时候就会有对暂存区的代码做 ESLint 代码校验和 Prettier 格式化处理。
 
-6. 接着是 commitlint 规范提交
+6. 接着是 commitlint 规范提交信息
+
+   ```bash
+   yarn add @commitlint/cli @commitlint/config-conventional -D
+   ```
+
+7. 创建 commitlint.config.js 配置文件
+
+   ```js
+   module.exports = {
+     extends: ['@commitlint/config-conventional'],
+   }
+   ```
+
+8. 生成 pre-commit hook
+
+   ```bash
+   npx husky add .husky/commit-msg 'npx commitlint --edit'
+   ```
+
+9. 到这里，husky + lint-staged + commitlint 都配置完成了。
+
+这一步，我们同时配置了代码规范和 git 规范，添加了 husky，所以需要在项目创建完成后，首先执行一下 git init 初始化 git 仓库，然后 husky 才能正常运行，于是就把提示信息多加了一项，如下。
+
+![create-vct-init.png](create-vct-init.png)
 
 ## 集成 ant design 作为 UI 库
 

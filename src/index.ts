@@ -11,6 +11,8 @@ import {
   eslintIgnore,
   prettierConfig,
   viteEslint,
+  packageScripts,
+  packageMore,
 } from './eslint'
 import { blue, green, red, reset, yellow } from 'kolorist'
 
@@ -77,6 +79,7 @@ async function init() {
     | 'isAntd'
     | 'isEslint'
     | 'isRedux'
+    | 'isQuery'
   >
 
   // 如果用户传入参数并且符合规则时 就不会进入询问
@@ -165,6 +168,11 @@ async function init() {
           name: 'isRedux',
           message: 'Add Redux Toolkit for state management tool?',
         },
+        {
+          type: () => 'confirm',
+          name: 'isQuery',
+          message: 'Add React Query for asynchronous state manager?',
+        },
       ],
       {
         onCancel: () => {
@@ -178,7 +186,16 @@ async function init() {
   }
 
   // 与提示关联的用户选择
-  const { overwrite, packageName, variant, isEslint, isAntd, isRouter, isRedux } = result
+  const {
+    overwrite,
+    packageName,
+    variant,
+    isEslint,
+    isAntd,
+    isRouter,
+    isRedux,
+    isQuery
+  } = result
 
   // 最终输出文件的目录
   const root = path.join(cwd, targetDir)
@@ -293,6 +310,11 @@ async function init() {
   )
   // eslint配置
   if (isEslint) {
+    const eslintTemplate = path.resolve(
+      // @ts-ignore
+      fileURLToPath(import.meta.url),
+      '../../eslint-templates'
+    )
     const eslintFile = path.join(targetPath, '.eslintrc.json')
     const prettierFile = path.join(targetPath, '.prettierrc.json')
     const eslintIgnoreFile = path.join(targetPath, '.eslintignore')
@@ -318,7 +340,13 @@ async function init() {
     fs.writeFileSync(prettierFile, JSON.stringify(prettierConfig, null, 2))
     fs.writeFileSync(eslintIgnoreFile, eslintIgnore.join('\n'))
     fs.writeFileSync(viteFile, viteConfig)
+    const files = fs.readdirSync(eslintTemplate)
+    for (const file of files.filter((f) => !f.includes('react'))) {
+      write(file, eslintTemplate)
+    }
     pkg.devDependencies = { ...pkg.devDependencies, ...packageList }
+    pkg.scripts = { ...pkg.scripts, ...packageScripts }
+    pkg['lint-staged'] = packageMore
 
     write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
   }
@@ -383,6 +411,27 @@ async function init() {
     pkg.dependencies = { ...pkg.dependencies, ...packages }
     write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
   }
+
+  // react-query
+  if (isQuery) {
+    const queryTemplate = path.resolve(
+      // @ts-ignore
+      fileURLToPath(import.meta.url),
+      '../../query-templates'
+    )
+    // 获取模板下的文件 将除了package.json的文件全部复制到输出目录中
+    const files = fs.readdirSync(queryTemplate)
+    for (const file of files.filter((f) => f !== 'index.js')) {
+      write(file, queryTemplate)
+    }
+    const MainComponent = path.join(targetPath, './src/Main.tsx')
+    // @ts-ignore
+    const { packages, Main } = await import('../query-templates/index.js')
+    fs.writeFileSync(MainComponent, Main)
+
+    pkg.dependencies = { ...pkg.dependencies, ...packages }
+    write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
+  }
   // 输出
   // cd ...
   // npm install
@@ -398,6 +447,7 @@ async function init() {
   }
   switch (pkgManager) {
     default:
+      console.log('  git init')
       console.log('  yarn')
       console.log('  yarn dev')
       break

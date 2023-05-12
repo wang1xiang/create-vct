@@ -8,7 +8,6 @@ const lazyLoad = (moduleName: string) =>
 
 const Home = lazyLoad('Home');
 const About = lazyLoad('About');
-const QueryDemo = lazyLoad('QueryDemo');
 
 const routers: RouteObject[] = [
   {
@@ -23,10 +22,6 @@ const routers: RouteObject[] = [
   {
     path: 'about',
     element: <About />,
-  },
-  {
-    path: 'queryDemo',
-    element: <QueryDemo />,
   },
 ];
 

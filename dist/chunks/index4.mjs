@@ -1,9 +1,8 @@
-export const packages = {
-  axios: '^1.4.0',
-  'react-query': '^3.39.3',
-}
-
-export const Main = `import React from 'react';
+const packages = {
+  axios: "^1.4.0",
+  "react-query": "^3.39.3"
+};
+const Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -14,7 +13,7 @@ import client from './api/query/query.client';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <QueryClientProvider client={client}>
-      {/* 添加devtools */}
+      {/* \u6DFB\u52A0devtools */}
       {process.env.NODE_ENV === 'development' ? (
         <ReactQueryDevtools
           initialIsOpen={false}
@@ -27,8 +26,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </QueryClientProvider>
   </React.StrictMode>
 );
-`
-export const Antd_Main = `import React from 'react';
+`;
+const Antd_Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -47,7 +46,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ConfigProvider locale={zhCN}>
       <QueryClientProvider client={client}>
-        {/* 添加devtools */}
+        {/* \u6DFB\u52A0devtools */}
         {process.env.NODE_ENV === 'development' ? (
           <ReactQueryDevtools
             initialIsOpen={false}
@@ -61,8 +60,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`
-export const Router_Main = `import React from 'react';
+`;
+const Router_Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import { BrowserRouter } from 'react-router-dom';
@@ -75,7 +74,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <QueryClientProvider client={client}>
-        {/* 添加devtools */}
+        {/* \u6DFB\u52A0devtools */}
         {process.env.NODE_ENV === 'development' ? (
           <ReactQueryDevtools
             initialIsOpen={false}
@@ -89,9 +88,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
-`
-
-export const Antd_Router_Main = `import React from 'react';
+`;
+const Antd_Router_Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -112,7 +110,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ConfigProvider locale={zhCN}>
       <BrowserRouter>
         <QueryClientProvider client={client}>
-          {/* 添加devtools */}
+          {/* \u6DFB\u52A0devtools */}
           {process.env.NODE_ENV === 'development' ? (
             <ReactQueryDevtools
               initialIsOpen={false}
@@ -127,9 +125,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`
-
-export const Redux_Main = `import React from 'react';
+`;
+const Redux_Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -143,7 +140,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
       <QueryClientProvider client={client}>
-        {/* 添加devtools */}
+        {/* \u6DFB\u52A0devtools */}
         {process.env.NODE_ENV === 'development' ? (
           <ReactQueryDevtools
             initialIsOpen={false}
@@ -157,9 +154,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </Provider>
   </React.StrictMode>
 );
-`
-
-export const Redux_Router_Main = `import React from 'react';
+`;
+const Redux_Router_Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import { BrowserRouter } from 'react-router-dom';
@@ -175,7 +171,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Provider store={store}>
         <QueryClientProvider client={client}>
-          {/* 添加devtools */}
+          {/* \u6DFB\u52A0devtools */}
           {process.env.NODE_ENV === 'development' ? (
             <ReactQueryDevtools
               initialIsOpen={false}
@@ -190,9 +186,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
-`
-
-export const Redux_Antd_Main = `import React from 'react';
+`;
+const Redux_Antd_Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -214,7 +209,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ConfigProvider locale={zhCN}>
       <Provider store={store}>
         <QueryClientProvider client={client}>
-          {/* 添加devtools */}
+          {/* \u6DFB\u52A0devtools */}
           {process.env.NODE_ENV === 'development' ? (
             <ReactQueryDevtools
               initialIsOpen={false}
@@ -229,8 +224,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`
-export const Redux_Antd_Router_Main = `import React from 'react';
+`;
+const Redux_Antd_Router_Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -254,7 +249,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <Provider store={store}>
           <QueryClientProvider client={client}>
-            {/* 添加devtools */}
+            {/* \u6DFB\u52A0devtools */}
             {process.env.NODE_ENV === 'development' ? (
               <ReactQueryDevtools
                 initialIsOpen={false}
@@ -270,9 +265,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`
-
-export const App = `import { useState } from 'react';
+`;
+const App = `import { useState } from 'react';
 import './App.scss';
 
 function App() {
@@ -292,8 +286,8 @@ function App() {
 }
 
 export default App;
-`
-export const Antd_App = `import { useState } from 'react';
+`;
+const Antd_App = `import { useState } from 'react';
 import { Button } from 'antd';
 import { Html5TwoTone } from '@ant-design/icons';
 import ReactQueryDemo from '@/pages/ReactQueryDemo';
@@ -323,8 +317,8 @@ function App() {
 }
 
 export default App;
-`
-export const Redux_App = `import { useState } from 'react';
+`;
+const Redux_App = `import { useState } from 'react';
 import ReduxToolkitDemo from '@/pages/ReduxToolkitDemo';
 import ReactQueryDemo from '@/pages/ReactQueryDemo';
 import './App.scss';
@@ -351,4 +345,6 @@ function App() {
 }
 
 export default App;
-`
+`;
+
+export { Antd_App, Antd_Main, Antd_Router_Main, App, Main, Redux_Antd_Main, Redux_Antd_Router_Main, Redux_App, Redux_Main, Redux_Router_Main, Router_Main, packages };

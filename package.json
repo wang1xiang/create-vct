@@ -1,15 +1,16 @@
 {
   "name": "create-vct",
-  "version": "4.2.0",
+  "version": "0.0.1",
   "type": "module",
   "author": "wang xiang",
   "bin": {
-    "create-vite": "index.js",
-    "cva": "index.js"
+    "create-vct": "index.js",
+    "cvt": "index.js"
   },
   "files": [
     "index.js",
     "template-*",
+    "*-templates",
     "dist"
   ],
   "main": "index.js",
@@ -40,6 +41,7 @@
     "@types/prompts": "^2.4.3",
     "chalk": "^5.2.0",
     "esno": "^0.16.3",
-    "nanospinner": "^1.1.0"
+    "nanospinner": "^1.1.0",
+    "unbuild": "^1.2.1"
   }
 }

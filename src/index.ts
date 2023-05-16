@@ -360,7 +360,6 @@ async function init() {
     write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
   }
 
-
   const copyTemplateFile = (name: string) => {
     const templatePath = generatePath(name, template)
     // 获取模板下的文件 将除了package.json的文件全部复制到输出目录中
@@ -372,8 +371,10 @@ async function init() {
   // react-router
   if (isRouter) {
     copyTemplateFile('router')
-    // @ts-ignore
-    let { packages, App, Main, Antd_App, Antd_Main } = await import('../router-templates/index.js')
+    let { packages, App, Main, Antd_App, Antd_Main } = await import(
+      // @ts-ignore
+      '../router-templates/index.js'
+    )
     if (isAntd) {
       App = Antd_App
       Main = Antd_Main
@@ -387,12 +388,25 @@ async function init() {
   // redux toolkit
   if (isRedux) {
     copyTemplateFile('redux')
-    // @ts-ignore
-    let { packages, Main, Router_Main, Antd_Main, Antd_Router_Main } = await import('../redux-templates/index.js')
-    if (isAntd) Main = Antd_Main
+    let {
+      packages,
+      Main,
+      Router_Main,
+      Antd_Main,
+      Antd_Router_Main,
+      App,
+      Antd_App,
+    } =
+      // @ts-ignore
+      await import('../redux-templates/index.js')
+    if (isAntd) {
+      Main = Antd_Main
+      App = Antd_App
+    }
     if (isRouter) Main = Router_Main
     if (isAntd && isRouter) Main = Antd_Router_Main
     fs.writeFileSync(MainComponent, Main)
+    !isRouter && fs.writeFileSync(AppComponent, App)
 
     pkg.dependencies = { ...pkg.dependencies, ...packages }
     write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
@@ -401,12 +415,37 @@ async function init() {
   // react-query
   if (isQuery) {
     copyTemplateFile('query')
-    // 获取模板下的文件 将除了package.json的文件全部复制到输出目录中
-    const MainComponent = path.join(targetPath, './src/Main.tsx')
-    // @ts-ignore
-    const { packages, Main } = await import('../query-templates/index.js')
-    // TODO: 区分之前的main.jsx
+    let {
+      packages,
+      Main,
+      Antd_Main,
+      Router_Main,
+      Antd_Router_Main,
+      Redux_Main,
+      Redux_Router_Main,
+      Redux_Antd_Main,
+      Redux_Antd_Router_Main,
+      App,
+      Antd_App,
+      Redux_App,
+      // @ts-ignore
+    } = await import('../query-templates/index.js')
+
+    if (isAntd) {
+      Main = Antd_Main
+      App = Antd_App
+    }
+    if (isRouter) Main = Router_Main
+    if (isRedux) {
+      Main = Redux_Main
+      App = Redux_App
+    }
+    if (isAntd && isRouter) Main = Antd_Router_Main
+    if (isAntd && isRedux) Main = Redux_Antd_Main
+    if (isRouter && isRedux) Main = Redux_Router_Main
+    if (isAntd && isRouter && isRedux) Main = Redux_Antd_Router_Main
     fs.writeFileSync(MainComponent, Main)
+    !isRouter && fs.writeFileSync(AppComponent, App)
 
     pkg.dependencies = { ...pkg.dependencies, ...packages }
     write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
@@ -520,7 +559,7 @@ function editFile(file: string, callback: (content: string) => string) {
   const content = fs.readFileSync(file, 'utf-8')
   fs.writeFileSync(file, callback(content), 'utf-8')
 }
-function generatePath (name: string, suffix = '') {
+function generatePath(name: string, suffix = '') {
   const template = path.resolve(
     // @ts-ignore
     fileURLToPath(import.meta.url),

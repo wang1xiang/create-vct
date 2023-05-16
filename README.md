@@ -15,7 +15,7 @@
 
 ## 针对 create-vite 的修改
 
-**"工欲善其事，必先利其器"**，开始之前，如果没看过 create-vite 源码的小伙伴，欢迎阅读这篇文章[站在巨人的肩膀上：你还不懂 create-vite 原理吗？来一起康康。](https://juejin.cn/post/7217750296171118651)，顺便动手点点赞 👍。
+**"工欲善其事，必先利其器"**，开始之前，如果没看过 create-vite 源码的小伙伴，欢迎阅读这篇文章[站在巨人的肩膀上：你还不懂 create-vite 原理吗？来一起康康](https://juejin.cn/post/7217750296171118651)，顺便动动手点个赞 👍。
 
 ### 删除不需要的模块
 
@@ -87,7 +87,25 @@ export default defineConfig({
 })
 ```
 
-**注意：vite 对.sass 已经提供了内置支持，所以不再需要安装 loader 了，[官方文档](https://cn.vitejs.dev/guide/features.html#css-pre-processors)**
+**注意：vite 对.sass 已经提供了内置支持，所以不再需要安装 loader 了，[官方解释](https://cn.vitejs.dev/guide/features.html#css-pre-processors)**
+
+### 将 classnames 引入项目
+
+个人感觉 CSS Modules 比 CSS In JS 看的更直观些，所以项目中使用 CSS Modules 的方式处理 css，当然你也可以用 CSS In JS 的方式处理，项目模板没有太多 css 代码，不会影响到你的选择。
+
+在脚手架中只需要在 package.json 中依赖中添加`"classnames": "^2.3.2"`即可。
+
+使用也很简单：
+
+```js
+import classNames from 'classnames/bind'
+import styles from './index.module.scss'
+const cx = classNames.bind(styles)
+
+const App = () => {
+  return <div className={cx('btn', 'btn-primary')}></div>
+}
+```
 
 ## 统一代码 & git 规范
 
@@ -107,11 +125,11 @@ insert_final_newline = false
 
 ### 添加 eslint & prettier 用于代码规范
 
-eslint 和 prettier 的安装参考的是[vite-pretty-lint](https://github.com/tzsk/vite-pretty-lint)，直接将项目克隆到本地，然后删除自己不需要的代码。
+eslint 和 prettier 的安装参考的是[vite-pretty-lint](https://github.com/tzsk/vite-pretty-lint)，将项目源码克隆到本地，只需要创建文件的那部分代码，其余的可删除。
 
 ### 添加 pre-commit 和 commit-msg 钩子
 
-可以参考我之前的文章：[vue3 项目添加 husky+lint-staged 配置](https://juejin.cn/post/7215454235046445112)，这里我们直接开整。
+添加 githooks，可以通过 git 来规范代码和规范提交信息，可以参考我之前的文章：[vue3 项目添加 husky+lint-staged 配置](https://juejin.cn/post/7215454235046445112)，这里我们直接开整。
 
 1. 添加 husky 和 lint-staged 依赖
 
@@ -159,7 +177,7 @@ eslint 和 prettier 的安装参考的是[vite-pretty-lint](https://github.com/t
 
    这一步完成后，在提交代码的时候就会有对暂存区的代码做 ESLint 代码校验和 Prettier 格式化处理。
 
-6. 接着是 commitlint 规范提交信息
+6. 接着是 commitlint 规范提交信息，安装依赖
 
    ```bash
    yarn add @commitlint/cli @commitlint/config-conventional -D
@@ -181,7 +199,7 @@ eslint 和 prettier 的安装参考的是[vite-pretty-lint](https://github.com/t
 
 9. 到这里，husky + lint-staged + commitlint 都配置完成了。
 
-这一步完成后，我们同时配置了代码规范和 git 规范，添加了 husky，所以需要在项目创建完成后，首先执行一下 git init 初始化 git 仓库，然后 husky 才能正常运行，于是就把提示信息多加了一项，如下。
+这一步完成后，我们同时配置了代码规范和 git 规范，添加了 husky，所以需要在项目创建完成后，首先**执行一下 git init 初始化 git 仓库，然后 husky 才能正常运行**，于是就把提示信息多加了一项，如下。
 
 ![create-vct-init.png](./iamges/create-vct-init.png)
 
@@ -228,11 +246,11 @@ if (isEslint) {
 
 ## 集成 ant design 作为 UI 库
 
-我们可以梳理下，如果添加 antd 需要做哪些事：
+我们可以梳理下，如果往项目中添加 Antd 需要做哪些事：
 
-1. 需要将 antd 依赖添加到 package.json 文件；
+1. 需要将 Antd 依赖添加到 package.json 文件；
 
-   ant-design@v5 版本支持 tree-shaking，就不用配置按需加载了。那么就很简单，我们只需要在 package.json 的`dependencies`字段中添加 antd 的库。
+   ant-design@v5 版本支持 tree-shaking，就不用配置按需加载了。那么就很简单，我们只需要在 package.json 的`dependencies`字段中添加 Antd 的库。
 
 2. 全局引入 reset.css 文件；
 3. 设置 ConfigProvider 全局化配置；
@@ -255,9 +273,9 @@ if (isEslint) {
    )
    ```
 
-4. 修改 App 组件，添加一个 antd 的组件，这样启动项目就可以看到 antd 的组件使用方法。
+4. 修改 App 组件，添加一个 antd 的组件，这样启动项目就可以看到 Antd 的组件使用方法。
 
-基于以上的步骤，我们可以仿照上面的代码来修改，最终实现如下：
+基于以上的步骤，我们可以仿照 ESLint 那块的代码来修改，最终实现如下：
 
 ```js
 // antd配置
@@ -277,6 +295,7 @@ if (isAntd) {
 
 ## 集成 react-router 作为路由
 
+同 Antd，首先我们先理一下将 react-router 添加到项目中步骤。
 这里直接使用[react-router@v6](https://reactrouter.com/zh/main)版本，v6 版本之前如果使用 typescript 时，需要同时安装`@types/react-router`、`@types/react-router-dom`、`react-router`和`react-router-dom`。
 
 > react-router 和 react-router-dom 的关系类似于 react 和 react-dom。dom 及浏览器环境，react-router-dom 通过添加用于 DOM 的组件，可以让 react-router 运行在浏览器环境，同时还有 react-router-native，用于 native 环境。
@@ -285,7 +304,7 @@ if (isAntd) {
 
 ### react-router v6 说明
 
-- `<Routes />`: 新增组件，移除 v5 的`<Switch />`组件，用`<Routes />`组件代替；
+- `<Routes />`: 新增组件，移除 v5 的`<Switch />`组件，用`<Routes />`组件代替，用法相同；
 - `<Router />`: 基础路由组件，v5 的 component={Home}改写为 element={Home}；
 - `<Link />`: 导航组件；
 - `<Outlet />`: 新增组件，自适应渲染组件；
@@ -375,23 +394,18 @@ if (isAntd) {
 
 基于以上步骤，我们实现的代码如下：
 
-首先询问是否需要安装 react-router，并返回 isRouter 是否为 true，如果为 true 时：
+首先询问是否需要安装 react-router，并返回 isRouter 是否为 true，如果为 true 时，将 react-router 的模板文件添加到输出目录中，同时修改 App.tsx 和 main.tsx 的代码：
 
 ```ts
 if (isRouter) {
-  const routeTemplate = generatePath('router', template)
-  // 获取模板下的文件 将除了package.json的文件全部复制到输出目录中
-  const files = fs.readdirSync(routeTemplate)
-  for (const file of files) {
-    write(file, routeTemplate)
-  }
+  copyTemplateFile('router')
   // @ts-ignore
-  let { packages, App, Main, antd_App, antd_Main } = await import(
+  let { packages, App, Main, Antd_App, Antd_Main } = await import(
     '../router-templates/index.js'
   )
   if (isAntd) {
-    App = antd_App
-    Main = antd_Main
+    App = Antd_App
+    Main = Antd_Main
   }
   fs.writeFileSync(AppComponent, App)
   fs.writeFileSync(MainComponent, Main)
@@ -409,9 +423,9 @@ if (isRouter) {
 
 优点如下：
 
-- 优化 Redux 中间件、各种配置以及书写目录规范等，简化操作，例如取代以前很恶心的 types、actions、reducers；
+- 优化 Redux 中间件、各种配置以及书写目录规范等，简化操作，例如取代 Redux 中很恶心的 types、actions、reducers；
 - React-Redux Hook API 取代麻烦的`connect`和`mapState`；
-- Reducer 中默认使用 Immer 来更新 Immutable 数据，不用再返回 state；
+- Reducer 中默认使用 Immer 来更新 Immutable 数据，不用再返回 state，简单、省事；
 - 封装好了 redux-devtools-extension，可直接使用；
 - 已经集成 redux-thunk，不需要再次安装；
 - 按 feature 组织 Redux 逻辑，更加清晰。
@@ -475,7 +489,7 @@ if (isRouter) {
 
 4. hooks.ts 钩子
 
-   官方推荐使用 useAppSelector 来操作 store 数据，使用 useAppDispatch 触发子 store 中的 action
+   官方推荐使用 useAppSelector 来操作 store 数据，使用 useAppDispatch 触发子 store 中的 action。
 
    ```ts
    import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
@@ -501,7 +515,7 @@ if (isRouter) {
 
 6. 组件中如何使用
 
-   在组件文件中，使用官方推荐的 useAppDispatch 和 useAppSelector，从每个子 slice 中获取 action
+   在组件文件中，使用官方推荐的 useAppDispatch 和 useAppSelector，从每个子 slice 中获取 action。
 
    ```tsx
    import { useAppDispatch, useAppSelector } from './store/hooks'
@@ -536,7 +550,7 @@ if (isRouter) {
 
 ### Redux Toolkit 异步操作
 
-在原始的 Redux 中，如果需要异步操作则需要安装 Redux-Thunk，而 Redux Toolkit 已经内置了 Redux-Thunk，不需要另外安装和配置。
+在原来的 Redux 中，如果需要异步操作则需要安装 Redux-Thunk，而 Redux Toolkit 已经内置了 Redux-Thunk，不需要另外安装和配置。
 
 我们只需要使用 createAsyncThunk 就能完成异步 action 的创建。
 
@@ -612,7 +626,7 @@ export default userSlice.reducer
 
 3. 还创建了一个 deleteUser action，用来删除用户
 
-   这一步主要是为了演示 immer 的作用，如果对 immer 不太熟悉的同学，可以看看这篇文章：[不可变数据实现-Immer.js](https://juejin.cn/post/7047450607984541710#heading-18)。
+   这一步主要是为了**演示 immer 的作用**，如果对 immer 不太熟悉的同学，可以看看这篇文章：[不可变数据实现-Immer.js](https://juejin.cn/post/7047450607984541710#heading-18)。
 
    要是以前在 Redux 中，我们需要这样操作：
 
@@ -641,7 +655,7 @@ export default userSlice.reducer
 
 基于以上步骤，我们实现的代码如下：
 
-首先询问是否需要安装 Redux Toolkit，并返回 isRedux 是否为 true，如果为 true 时：
+首先询问是否需要安装 Redux Toolkit，并返回 isRedux 是否为 true，如果为 true 时，将 redux-toolkit 的模板文件添加到输出目录中，同时修改 main.tsx 的代码：
 
 ```ts
 if (isRedux) {
@@ -663,7 +677,7 @@ if (isRedux) {
 
 ### 为什么是 react query
 
-用官方的来说：React Query 通常被描述为 React 缺少的数据获取(data-fetching)库，但是从更广泛的角度来看，它使 React 程序中的获取，缓存，同步和更新服务器状态变得轻而易举。
+用官方的来说：React Query 通常被描述为 React 缺少的数据获取(data-fetching)库，但是从更广泛的角度来看，它**使 React 程序中的获取，缓存，同步和更新服务器状态变得轻而易举**。
 
 接下来，跟着我的流程看一下，你就会发现 react query 太香了。
 
@@ -771,7 +785,7 @@ if (isRedux) {
      })
    ```
 
-   **插图：ts 获取数据**
+   ![axios-ts-resdata](./images/axios-ts-resdata.gif)
 
    query.client.ts 用于初始化 react query，导出 client 会在 QueryClientProvider 中进行透传。
 
@@ -787,7 +801,7 @@ if (isRedux) {
    export default client
    ```
 
-   query.constant.ts 用于统一管理 react query 所有的 key，**key 有什么用呢？**这个只要你把 react query 用起来就可以知道 key 的作用了。
+   query.constant.ts 用于统一管理 react query 所有的 key，**key 有什么用呢**？这个只要你把 react query 用起来就可以知道 key 的作用了。
 
    ```ts
    export const QUERY_USER_LIST = 'user/list'
@@ -804,7 +818,10 @@ if (isRedux) {
      <QueryClientProvider client={client}>
        {/* 添加devtools */}
        {process.env.NODE_ENV === 'development' ? (
-         <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+         <ReactQueryDevtools
+            initialIsOpen={false}
+            position="bottom-right"
+          />
        ) : (
          ''
        )}
@@ -816,7 +833,7 @@ if (isRedux) {
 
 4. 在组件中使用
 
-   通过下面这个例子可以看出来，不使用 react query 的情况下，我要既要通过 useState 管理 loading 和数据状态，还得通过 useEffect 来发送请求；而使用 react-query 的情况下，各种数据状态直接可以使用 useQuery 来代替，简化我们的代码。
+   通过下面这个例子可以看出来，不使用 react query 的情况下，我要既要通过 useState 管理 loading 和数据状态，还得通过 useEffect 来发送请求；而使用 react-query 的情况下，各种**数据状态直接可以使用 useQuery 来代替**，简化我们的代码。
 
    ```tsx
    import { getUserList } from '@/api/feature/app'
@@ -861,3 +878,18 @@ if (isRedux) {
 
 基于以上步骤，我们实现的代码如下：
 
+首先询问是否需要安装 react-query，并返回 isQuery 是否为 true，如果为 true 时，将 react-query 的模板文件添加到输出目录中，同时修改 main.tsx 的代码：
+
+```ts
+if (isQuery) {
+  copyTemplateFile('query')
+  // 获取模板下的文件 将除了package.json的文件全部复制到输出目录中
+  const MainComponent = path.join(targetPath, './src/Main.tsx')
+  // @ts-ignore
+  const { packages, Main } = await import('../query-templates/index.js')
+  fs.writeFileSync(MainComponent, Main)
+
+  pkg.dependencies = { ...pkg.dependencies, ...packages }
+  write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
+}
+```

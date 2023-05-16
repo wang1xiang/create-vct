@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   selectCount,
@@ -6,14 +5,14 @@ import {
   incremented,
 } from '@/store/feature/appSlice';
 import { deleteUser, getUserData, selectUser } from '@/store/feature/userSlice';
+import classNames from 'classnames/bind';
+import styles from './index.module.scss';
+const cx = classNames.bind(styles);
 
 function ReduxToolkitDemo() {
   const count = useAppSelector(selectCount);
 
   const users = useAppSelector(selectUser);
-  const router = useNavigate();
-
-  const toHome = () => router('/home');
 
   const dispatch = useAppDispatch();
   return (
@@ -40,6 +39,7 @@ function ReduxToolkitDemo() {
             <li
               onClick={() => dispatch(deleteUser(user.id))}
               key={user.id as string}
+              className={cx('demo-li')}
             >
               {user.login}
             </li>
@@ -47,7 +47,6 @@ function ReduxToolkitDemo() {
         </ul>
       </div>
       <br />
-      <button onClick={toHome}>去 home</button>
     </>
   );
 }

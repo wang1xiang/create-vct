@@ -1,9 +1,8 @@
-export const packages = {
-  '@reduxjs/toolkit': '^1.9.5',
-  'react-redux': '^8.0.5',
-}
-
-export const Router_Main = `import React from 'react';
+const packages = {
+  "@reduxjs/toolkit": "^1.9.5",
+  "react-redux": "^8.0.5"
+};
+const Router_Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import { BrowserRouter } from 'react-router-dom';
@@ -20,9 +19,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
-`
-
-export const Antd_Main = `import React from 'react';
+`;
+const Antd_Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -45,8 +43,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`
-export const Antd_Router_Main = `import React from 'react';
+`;
+const Antd_Router_Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -72,8 +70,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`
-export const Main = `import React from 'react';
+`;
+const Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -87,9 +85,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </Provider>
   </React.StrictMode>
 );
-`
-
-export const App = `import { useState } from 'react';
+`;
+const App = `import { useState } from 'react';
 import ReduxToolkitDemo from '@/pages/ReduxToolkitDemo';
 import './App.scss';
 
@@ -112,8 +109,8 @@ function App() {
 }
 
 export default App;
-`
-export const Antd_App = `import { useState } from 'react';
+`;
+const Antd_App = `import { useState } from 'react';
 import { Button } from 'antd';
 import { Html5TwoTone } from '@ant-design/icons';
 import ReduxToolkitDemo from '@/pages/ReduxToolkitDemo';
@@ -144,4 +141,6 @@ function App() {
 }
 
 export default App;
-`
+`;
+
+export { Antd_App, Antd_Main, Antd_Router_Main, App, Main, Router_Main, packages };

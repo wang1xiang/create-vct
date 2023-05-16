@@ -1,9 +1,8 @@
-export const packages = {
-  'react-router': '^6.11.1',
-  'react-router-dom': '^6.11.1',
-}
-
-export const Main = `import React from 'react';
+const packages = {
+  "react-router": "^6.11.1",
+  "react-router-dom": "^6.11.1"
+};
+const Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import { BrowserRouter } from 'react-router-dom';
@@ -16,9 +15,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
-`
-
-export const App = `import './App.scss';
+`;
+const App = `import './App.scss';
 import routers from './routes/routerConfig';
 import { useRoutes } from 'react-router-dom';
 import { Suspense } from 'react';
@@ -29,9 +27,8 @@ function App() {
 }
 
 export default App;
-`
-
-export const Antd_App = `import './App.scss';
+`;
+const Antd_App = `import './App.scss';
 import routers from './routes/routerConfig';
 import { useRoutes } from 'react-router-dom';
 import { Suspense } from 'react';
@@ -43,8 +40,8 @@ function App() {
 }
 
 export default App;
-`
-export const Antd_Main = `import React from 'react';
+`;
+const Antd_Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -66,4 +63,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`
+`;
+
+export { Antd_App, Antd_Main, App, Main, packages };

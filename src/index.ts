@@ -1,8 +1,6 @@
-/* ts-ignore */
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import spawn from 'cross-spawn'
 import minimist from 'minimist'
 import prompts from 'prompts'
 import {
@@ -14,7 +12,7 @@ import {
   packageScripts,
   packageMore,
 } from './eslint'
-import { blue, green, red, reset, yellow } from 'kolorist'
+import { blue, red, reset, yellow } from 'kolorist'
 
 // 解析命令行传入的参数为 {_: [], template: ''}格式
 const argv = minimist<{
@@ -43,12 +41,6 @@ const variants: any[] = [
     name: 'react-swc-ts',
     display: 'TypeScript + SWC',
     color: blue,
-  },
-  {
-    name: 'custom-create-react',
-    display: 'Customize with create-react ↗',
-    color: green,
-    customCommand: 'npx create-react-app TARGET_DIR',
   },
 ]
 const variantNames = variants.map((v) => v.name)
@@ -216,48 +208,6 @@ async function init() {
     template = template.replace('-swc', '')
   }
 
-  // process.env.npm_config_user_agent = npm/8.19.3 node/v16.19.1 darwin arm64 workspaces/false
-  const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
-  // 当前的包管理器
-  const pkgManager = pkgInfo ? pkgInfo.name : 'npm'
-  // 是否是yarn 1.x版本
-  const isYarn1 = pkgManager === 'yarn' && pkgInfo?.version.startsWith('1.')
-
-  const { customCommand } = variants.find((v) => v.name === template) ?? {}
-
-  // 拿到自定义命令 如：create-vue npm create vue@latest TARGET_DIR
-  if (customCommand) {
-    const fullCustomCommand = customCommand
-      .replace(/^npm create/, `${pkgManager} create`)
-      // Only Yarn 1.x doesn't support `@version` in the `create` command
-      .replace('@latest', () => (isYarn1 ? '' : '@latest'))
-      .replace(/^npm exec/, () => {
-        // Prefer `pnpm dlx` or `yarn dlx`
-        if (pkgManager === 'pnpm') {
-          return 'pnpm dlx'
-        }
-        if (pkgManager === 'yarn' && !isYarn1) {
-          return 'yarn dlx'
-        }
-        // Use `npm exec` in all other cases,
-        // including Yarn 1.x and other custom npm clients.
-        return 'npm exec'
-      })
-
-    const [command, ...args] = fullCustomCommand.split(' ')
-    // 替换TARGET_DIR为真实路径
-    const replacedArgs = args.map((arg: string) =>
-      arg.replace('TARGET_DIR', targetDir)
-    )
-
-    // 通过spawn.sync执行此命令
-    const { status } = spawn.sync(command, replacedArgs, {
-      // stdio: 'inherit'意思是继承：子进程继承当前进程的输入输出 并将输出信息同步输出在当前进程上
-      stdio: 'inherit',
-    })
-    process.exit(status ?? 0)
-  }
-
   console.log(`\nScaffolding project in ${root}...`)
 
   // 确认模板路径
@@ -295,27 +245,18 @@ async function init() {
 
   write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
 
-  // 选择的是react swc模板时 替换插件
-  if (isReactSwc) {
-    setupReactSwc(root, template.endsWith('-ts'))
-  }
-
   // 确认模板路径
-  const targetPath = path.resolve(
-    // file:///Users/xiangwang/My/github/create-vite-analysis/src/index.ts
-    // @ts-ignore
-    fileURLToPath(import.meta.url),
-    '../..',
-    `${targetDir}`
-  )
+  const writePackage = (pkg: string) => {
+    write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
+  }
   // eslint配置
   if (isEslint) {
     const eslintTemplate = generatePath('eslint')
-    const eslintFile = path.join(targetPath, '.eslintrc.json')
-    const prettierFile = path.join(targetPath, '.prettierrc.json')
-    const eslintIgnoreFile = path.join(targetPath, '.eslintignore')
+    const eslintFile = path.join(root, '.eslintrc.json')
+    const prettierFile = path.join(root, '.prettierrc.json')
+    const eslintIgnoreFile = path.join(root, '.eslintignore')
     const { packages, eslintOverrides } = await import(
-      `${eslintTemplate}/${template}.js`
+      `../eslint-templates/${template}.js`
     )
 
     const packageList = { ...commonPackages, ...packages }
@@ -327,7 +268,7 @@ async function init() {
 
     const viteConfigFiles = ['vite.config.js', 'vite.config.ts']
     const [viteFile] = viteConfigFiles
-      .map((file) => path.join(targetPath, file))
+      .map((file) => path.join(root, file))
       .filter((file) => fs.existsSync(file))
 
     const viteConfig = viteEslint(fs.readFileSync(viteFile, 'utf8'))
@@ -344,12 +285,12 @@ async function init() {
     pkg.scripts = { ...pkg.scripts, ...packageScripts }
     pkg['lint-staged'] = packageMore
 
-    write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
+    writePackage(pkg)
   }
   // antd配置
   const fileSuffix = template.endsWith('-ts') ? '.tsx' : '.jsx'
-  const AppComponent = path.join(targetPath, `/src/App${fileSuffix}`)
-  const MainComponent = path.join(targetPath, `/src/main${fileSuffix}`)
+  const AppComponent = path.join(root, `/src/App${fileSuffix}`)
+  const MainComponent = path.join(root, `/src/main${fileSuffix}`)
   if (isAntd) {
     // @ts-ignore
     const { packages, App, Main } = await import('../antd-templates/index.js')
@@ -357,7 +298,7 @@ async function init() {
     fs.writeFileSync(MainComponent, Main)
 
     pkg.dependencies = { ...pkg.dependencies, ...packages }
-    write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
+    writePackage(pkg)
   }
 
   const copyTemplateFile = (name: string) => {
@@ -371,7 +312,7 @@ async function init() {
   // react-router
   if (isRouter) {
     copyTemplateFile('router')
-    let { packages, App, Main, Antd_App, Antd_Main } = await import(
+    let { packages, App, Main, Antd_App, Antd_Main, AppLayout } = await import(
       // @ts-ignore
       '../router-templates/index.js'
     )
@@ -381,9 +322,15 @@ async function init() {
     }
     fs.writeFileSync(AppComponent, App)
     fs.writeFileSync(MainComponent, Main)
-
+    if (!isAntd) {
+      const AppLayoutComponent = path.join(
+        root,
+        `/src/layout/AppLayout${fileSuffix}`
+      )
+      fs.writeFileSync(AppLayoutComponent, AppLayout)
+    }
     pkg.dependencies = { ...pkg.dependencies, ...packages }
-    write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
+    writePackage(pkg)
   }
   // redux toolkit
   if (isRedux) {
@@ -409,7 +356,7 @@ async function init() {
     !isRouter && fs.writeFileSync(AppComponent, App)
 
     pkg.dependencies = { ...pkg.dependencies, ...packages }
-    write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
+    writePackage(pkg)
   }
 
   // react-query
@@ -448,8 +395,14 @@ async function init() {
     !isRouter && fs.writeFileSync(AppComponent, App)
 
     pkg.dependencies = { ...pkg.dependencies, ...packages }
-    write('package.json', templateDir, JSON.stringify(pkg, null, 2) + '\n')
+    writePackage(pkg)
   }
+
+  // 选择的是react swc模板时 替换插件
+  if (isReactSwc) {
+    setupReactSwc(root, template.endsWith('-ts'))
+  }
+
   // 输出
   // cd ...
   // npm install
@@ -463,6 +416,10 @@ async function init() {
       }`
     )
   }
+
+  const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
+  // 当前的包管理器
+  const pkgManager = pkgInfo ? pkgInfo.name : 'npm'
   switch (pkgManager) {
     default:
       if (isEslint) {
@@ -563,7 +520,8 @@ function generatePath(name: string, suffix = '') {
   const template = path.resolve(
     // @ts-ignore
     fileURLToPath(import.meta.url),
-    `../../${name}-templates/${suffix}`
+    '../..',
+    `${name}-templates/${suffix}`
   )
   return template
 }

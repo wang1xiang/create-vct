@@ -1,8 +1,4 @@
-const packages = {
-  axios: "^1.4.0",
-  "react-query": "^3.39.3"
-};
-const Main = `import React from 'react';
+const e={axios:"^1.4.0","react-query":"^3.39.3"},t=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -26,8 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </QueryClientProvider>
   </React.StrictMode>
 );
-`;
-const Antd_Main = `import React from 'react';
+`,r=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -60,8 +55,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`;
-const Router_Main = `import React from 'react';
+`,o=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import { BrowserRouter } from 'react-router-dom';
@@ -88,8 +82,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
-`;
-const Antd_Router_Main = `import React from 'react';
+`,i=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -125,8 +118,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`;
-const Redux_Main = `import React from 'react';
+`,c=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -154,8 +146,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </Provider>
   </React.StrictMode>
 );
-`;
-const Redux_Router_Main = `import React from 'react';
+`,m=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import { BrowserRouter } from 'react-router-dom';
@@ -186,8 +177,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
-`;
-const Redux_Antd_Main = `import React from 'react';
+`,n=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -224,8 +214,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`;
-const Redux_Antd_Router_Main = `import React from 'react';
+`,a=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -265,8 +254,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`;
-const App = `import { useState } from 'react';
+`,p=`import { useState } from 'react';
 import './App.scss';
 
 function App() {
@@ -286,8 +274,7 @@ function App() {
 }
 
 export default App;
-`;
-const Antd_App = `import { useState } from 'react';
+`,d=`import { useState } from 'react';
 import { Button } from 'antd';
 import { Html5TwoTone } from '@ant-design/icons';
 import ReactQueryDemo from '@/pages/ReactQueryDemo';
@@ -317,8 +304,7 @@ function App() {
 }
 
 export default App;
-`;
-const Redux_App = `import { useState } from 'react';
+`,s=`import { useState } from 'react';
 import ReduxToolkitDemo from '@/pages/ReduxToolkitDemo';
 import ReactQueryDemo from '@/pages/ReactQueryDemo';
 import './App.scss';
@@ -345,6 +331,4 @@ function App() {
 }
 
 export default App;
-`;
-
-export { Antd_App, Antd_Main, Antd_Router_Main, App, Main, Redux_Antd_Main, Redux_Antd_Router_Main, Redux_App, Redux_Main, Redux_Router_Main, Router_Main, packages };
+`;export{d as Antd_App,r as Antd_Main,i as Antd_Router_Main,p as App,t as Main,n as Redux_Antd_Main,a as Redux_Antd_Router_Main,s as Redux_App,c as Redux_Main,m as Redux_Router_Main,o as Router_Main,e as packages};

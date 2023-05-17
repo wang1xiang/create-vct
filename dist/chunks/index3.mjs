@@ -1,8 +1,4 @@
-const packages = {
-  "@reduxjs/toolkit": "^1.9.5",
-  "react-redux": "^8.0.5"
-};
-const Router_Main = `import React from 'react';
+const t={"@reduxjs/toolkit":"^1.9.5","react-redux":"^8.0.5"},o=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import { BrowserRouter } from 'react-router-dom';
@@ -19,8 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
-`;
-const Antd_Main = `import React from 'react';
+`,r=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -43,8 +38,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`;
-const Antd_Router_Main = `import React from 'react';
+`,e=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -70,8 +64,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`;
-const Main = `import React from 'react';
+`,i=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -85,8 +78,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </Provider>
   </React.StrictMode>
 );
-`;
-const App = `import { useState } from 'react';
+`,m=`import { useState } from 'react';
 import ReduxToolkitDemo from '@/pages/ReduxToolkitDemo';
 import './App.scss';
 
@@ -109,8 +101,7 @@ function App() {
 }
 
 export default App;
-`;
-const Antd_App = `import { useState } from 'react';
+`,c=`import { useState } from 'react';
 import { Button } from 'antd';
 import { Html5TwoTone } from '@ant-design/icons';
 import ReduxToolkitDemo from '@/pages/ReduxToolkitDemo';
@@ -141,6 +132,4 @@ function App() {
 }
 
 export default App;
-`;
-
-export { Antd_App, Antd_Main, Antd_Router_Main, App, Main, Router_Main, packages };
+`;export{c as Antd_App,r as Antd_Main,e as Antd_Router_Main,m as App,i as Main,o as Router_Main,t as packages};

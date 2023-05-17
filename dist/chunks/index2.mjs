@@ -1,8 +1,23 @@
-const packages = {
-  "react-router": "^6.11.1",
-  "react-router-dom": "^6.11.1"
-};
-const Main = `import React from 'react';
+const t={"react-router":"^6.11.1","react-router-dom":"^6.11.1"},e=`import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+
+export default function AppLayout() {
+  const location = useLocation()
+  const router = useNavigate()
+  useEffect(() => {
+    location.pathname === '/' ? router('/home') : null
+  }, [location.pathname])
+
+  return (
+    <div style={{ display: 'flex' }}>
+      <section style={{ marginRight: 20 }}>sider</section>
+      <section>
+        <Outlet />
+      </section>
+    </div>
+  )
+}
+`,o=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import { BrowserRouter } from 'react-router-dom';
@@ -15,8 +30,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
-`;
-const App = `import './App.scss';
+`,r=`import './App.scss';
 import routers from './routes/routerConfig';
 import { useRoutes } from 'react-router-dom';
 import { Suspense } from 'react';
@@ -27,8 +41,7 @@ function App() {
 }
 
 export default App;
-`;
-const Antd_App = `import './App.scss';
+`,s=`import './App.scss';
 import routers from './routes/routerConfig';
 import { useRoutes } from 'react-router-dom';
 import { Suspense } from 'react';
@@ -40,8 +53,7 @@ function App() {
 }
 
 export default App;
-`;
-const Antd_Main = `import React from 'react';
+`,p=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import './index.scss';
@@ -63,6 +75,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`;
-
-export { Antd_App, Antd_Main, App, Main, packages };
+`;export{s as Antd_App,p as Antd_Main,r as App,e as AppLayout,o as Main,t as packages};

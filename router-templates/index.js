@@ -2,6 +2,26 @@ export const packages = {
   'react-router': '^6.11.1',
   'react-router-dom': '^6.11.1',
 }
+export const AppLayout = `import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+
+export default function AppLayout() {
+  const location = useLocation()
+  const router = useNavigate()
+  useEffect(() => {
+    location.pathname === '/' ? router('/home') : null
+  }, [location.pathname])
+
+  return (
+    <div style={{ display: 'flex' }}>
+      <section style={{ marginRight: 20 }}>sider</section>
+      <section>
+        <Outlet />
+      </section>
+    </div>
+  )
+}
+`
 
 export const Main = `import React from 'react';
 import ReactDOM from 'react-dom/client';

@@ -1,8 +1,7 @@
 import path from 'node:path'
 import url from 'node:url'
 import { defineBuildConfig } from 'unbuild'
-import licensePlugin from '../vite/rollupLicensePlugin'
-
+// @ts-ignore
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
 export default defineBuildConfig({
@@ -22,11 +21,6 @@ export default defineBuildConfig({
     'rollup:options'(ctx, options) {
       options.plugins = [
         options.plugins,
-        licensePlugin(
-          path.resolve(__dirname, './LICENSE'),
-          'create-vite license',
-          'create-vite',
-        ),
       ]
     },
   },

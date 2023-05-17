@@ -1,9 +1,4 @@
-const packages = {
-  "@ant-design/icons": "^5.0.1",
-  "antd": "^5.4.6",
-  "dayjs": "^1.11.7"
-};
-const App = `import { useState } from 'react';
+const t={"@ant-design/icons":"^5.0.1",antd:"^5.4.6",dayjs:"^1.11.7"},o=`import { useState } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import { Button } from 'antd';
@@ -38,8 +33,7 @@ function App() {
 }
 
 export default App;
-`;
-const Main = `import React from 'react';
+`,e=`import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import 'antd/dist/reset.css';
@@ -58,6 +52,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
-`;
-
-export { App, Main, packages };
+`;export{o as App,e as Main,t as packages};

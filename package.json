@@ -1,6 +1,6 @@
 {
   "name": "create-vct",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "type": "module",
   "author": "wang xiang",
   "bin": {
@@ -24,24 +24,20 @@
   "engines": {
     "node": "^14.18.0 || >=16.0.0"
   },
+  "dependencies": {
+    "@babel/core": "^7.21.4",
+    "@types/minimist": "^1.2.2",
+    "@types/node": "^18.15.11",
+    "@types/prompts": "^2.4.3",
+    "esno": "^0.16.3",
+    "unbuild": "^1.2.1"
+  },
   "devDependencies": {
-    "cross-spawn": "^7.0.3",
     "kolorist": "^1.7.0",
     "minimist": "^1.2.8",
     "prompts": "^2.4.2",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
     "typescript": "^5.0.2"
-  },
-  "dependencies": {
-    "@babel/core": "^7.21.4",
-    "@types/cross-spawn": "^6.0.2",
-    "@types/minimist": "^1.2.2",
-    "@types/node": "^18.15.11",
-    "@types/prompts": "^2.4.3",
-    "chalk": "^5.2.0",
-    "esno": "^0.16.3",
-    "nanospinner": "^1.1.0",
-    "unbuild": "^1.2.1"
   }
 }

@@ -1,4 +1,5 @@
 import ErrorPage from '@/pages/ErrorPage';
+import AppLayout from '@/layout/AppLayout';
 import { lazy } from 'react';
 
 // 快速导入工具函数
@@ -12,20 +13,34 @@ const ReactQueryDemo = lazyLoad('ReactQueryDemo');
 const routers = [
   {
     path: '/',
-    element: <Home />,
+    element: <AppLayout />,
     errorElement: <ErrorPage />,
-  },
-  {
-    path: 'home',
-    element: <Home />,
-  },
-  {
-    path: 'toolkit',
-    element: <ReduxToolkitDemo />,
-  },
-  {
-    path: 'query',
-    element: <ReactQueryDemo />,
+    meta: {
+      title: '',
+    },
+    children: [
+      {
+        path: 'home',
+        element: <Home />,
+        meta: {
+          title: 'Home',
+        },
+      },
+      {
+        path: 'toolkit',
+        element: <ReduxToolkitDemo />,
+        meta: {
+          title: 'React Toolkit',
+        },
+      },
+      {
+        path: 'query',
+        element: <ReactQueryDemo />,
+        meta: {
+          title: 'React Query',
+        },
+      },
+    ],
   },
 ];
 

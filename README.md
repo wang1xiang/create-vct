@@ -1,10 +1,10 @@
-# ![create-vct](./images/create-vct.svg) create-vct
+# ![create-vct](https://raw.githubusercontent.com/wang1xiang/create-vct/master/images/create-vct.svg) create-vct
 
 这是一个用于初始化 vite + React 企业级项目的脚手架工具。
 
 ## 🔥 运行流程
 
-![create-vct-flow.gif](./images/create-vct-flow.gif)
+![create-vct-flow.gif](https://raw.githubusercontent.com/wang1xiang/create-vct/master/images/create-vct-flow.gif)
 
 ## 🎁 安装 & 使用
 

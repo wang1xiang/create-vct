@@ -48,7 +48,7 @@ export default function request<Res = any, Q = any>(
 ) {
   return service(req).then(
     (res) => {
-      return res.data as resData<Res>;
+      return res as unknown as resData<Res>;
     },
     (res) => {
       return Promise.reject((res.data || res) as resData<Res>);

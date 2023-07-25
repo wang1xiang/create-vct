@@ -11,7 +11,7 @@ const ReactQueryDemo = () => {
   // const getList = () => {
   //   setLoading(true);
   //   getUserList('wang')
-  //     .then((res) => setUsers(res.items))
+  //     .then((res) => setUsers(res.data.items))
   //     .finally(() => setLoading(false));
   // };
   // useEffect(() => getList(), []);
@@ -20,7 +20,7 @@ const ReactQueryDemo = () => {
     QUERY_USER_LIST,
     () => getUserList('wang'),
     {
-      select: (res) => res.items,
+      select: (res) => res.data.items,
     }
   );
   return (
